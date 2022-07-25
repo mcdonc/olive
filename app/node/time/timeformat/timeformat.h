@@ -18,37 +18,36 @@
 
 ***/
 
-#ifndef GENERATEJOB_H
-#define GENERATEJOB_H
+#ifndef TIMEFORMAT_H
+#define TIMEFORMAT_H
 
-#include "acceleratedjob.h"
-#include "render/videoparams.h"
+#include "node/node.h"
 
 namespace olive {
 
-class GenerateJob : public AcceleratedJob {
+class TimeFormatNode : public Node
+{
+  Q_OBJECT
 public:
-  GenerateJob()
-  {
-    requested_format_ = VideoParams::kFormatInvalid;
-  }
+  TimeFormatNode();
 
-  VideoParams::Format GetRequestedFormat() const { return requested_format_; }
+  NODE_DEFAULT_FUNCTIONS(TimeFormatNode)
 
-  void SetRequestedFormat(VideoParams::Format f) { requested_format_ = f; }
+  virtual QString Name() const override;
+  virtual QString id() const override;
+  virtual QVector<CategoryID> Category() const override;
+  virtual QString Description() const override;
 
-  const QString &GetColorspace() const { return colorspace_; }
-  void SetColorspace(const QString &s) { colorspace_ = s; }
+  virtual void Retranslate() override;
 
-private:
-  VideoParams::Format requested_format_;
+  virtual void Value(const NodeValueRow& value, const NodeGlobals &globals, NodeValueTable *table) const override;
 
-  QString colorspace_;
+  static const QString kTimeInput;
+  static const QString kFormatInput;
+  static const QString kLocalTimeInput;
 
 };
 
 }
 
-Q_DECLARE_METATYPE(olive::GenerateJob)
-
-#endif // GENERATEJOB_H
+#endif // TIMEFORMAT_H

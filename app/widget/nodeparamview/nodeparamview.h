@@ -107,6 +107,11 @@ protected:
     return keyframe_view_ ? &keyframe_view_->GetSelectedKeyframes() : nullptr;
   }
 
+  virtual const TimeTargetObject *GetKeyframeTimeTarget() const override
+  {
+    return keyframe_view_;
+  }
+
 private:
   void UpdateItemTime(const rational &time);
 
@@ -165,6 +170,7 @@ private slots:
   //void FocusChanged(QWidget *old, QWidget *now);
 
   void KeyframeViewDragged(int x, int y);
+  void KeyframeViewReleased();
 
   void NodeAddedToContext(Node *n);
 

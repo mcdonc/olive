@@ -906,8 +906,7 @@ void TimelineWidget::ViewMouseMoved(TimelineViewMouseEvent *event)
 
       UpdateViewports();
 
-      QMetaObject::invokeMethod(this, "CatchUpScrollToPoint", Qt::QueuedConnection,
-                                Q_ARG(int, qRound(event->GetSceneX())));
+      SetCatchUpScrollValue(event->GetScreenPos().x());
     } else {
       // Mouse is not down, attempt a hover event
       TimelineTool* hover_tool = GetActiveTool();
@@ -922,6 +921,8 @@ void TimelineWidget::ViewMouseMoved(TimelineViewMouseEvent *event)
 
 void TimelineWidget::ViewMouseReleased(TimelineViewMouseEvent *event)
 {
+  StopCatchUpScrollTimer();
+
   if (active_tool_) {
     if (GetConnectedNode()) {
       active_tool_->MouseRelease(event);
@@ -956,16 +957,22 @@ void TimelineWidget::ViewDragMoved(TimelineViewMouseEvent *event)
 {
   import_tool_->DragMove(event);
   UpdateViewports();
+
+  SetCatchUpScrollValue(event->GetScreenPos().x());
 }
 
 void TimelineWidget::ViewDragLeft(QDragLeaveEvent *event)
 {
+  StopCatchUpScrollTimer();
+
   import_tool_->DragLeave(event);
   UpdateViewports();
 }
 
 void TimelineWidget::ViewDragDropped(TimelineViewMouseEvent *event)
 {
+  StopCatchUpScrollTimer();
+
   import_tool_->DragDrop(event);
   UpdateViewports();
 }
@@ -1100,8 +1107,7 @@ void TimelineWidget::ShowContextMenu()
       }
     }
 
-    QAction* rename_action = menu.addAction(tr("Rename"));
-    connect(rename_action, &QAction::triggered, this, &TimelineWidget::RenameSelectedBlocks);
+    menu.addSeparator();
 
     QAction* properties_action = menu.addAction(tr("Properties"));
     connect(properties_action, &QAction::triggered, this, &TimelineWidget::ShowSpeedDurationDialogForSelectedClips);
