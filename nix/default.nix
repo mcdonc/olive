@@ -14,7 +14,6 @@ pkgs.stdenv.mkDerivation rec {
   
   nativeBuildInputs = with pkgs; [
     cmake
-    libsForQt5.qt5.wrapQtAppsHook
   ];
 
   buildInputs = with pkgs; [
